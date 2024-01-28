@@ -1,2 +1,2 @@
-# projects
-List of final projects tasked by MySkill. Includes tasks in using SQL, Python, and Looker Studio
+# SQL projects
+List of SQL final projects tasked by MySkill
