@@ -1,4 +1,4 @@
--- show the month with the biggest transaction value after discount in year 2021 --
+-- show the month with the biggest transaction value in year 2021 --
 
 select *
 from 
