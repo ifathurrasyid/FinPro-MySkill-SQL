@@ -1,0 +1,67 @@
+-- CTE
+with "transaction per brand" as
+	(select
+		case
+			when lower(sd.sku_name) like ('%samsung%') then 'Samsung'
+			when lower(sd.sku_name) like any (array['%apple%', '%iphone%']) then 'Apple'
+			when lower(sd.sku_name) like ('%sony%') then 'Sony'
+			when lower(sd.sku_name) like ('%huawei%') then 'Huawei'
+			when lower(sd.sku_name) like ('%lenovo%') then 'Lenovo'
+			else sd.sku_name
+		end as brands,
+			round(sum(od.after_discount)) as transaction
+		from
+			order_detail od
+		join
+			sku_detail sd 
+		on
+			od.sku_id = sd.id
+		where
+			od.is_valid = 1
+		and
+			sd.sku_name ilike any (array['%Samsung%','%Apple%','%Sony%','%Huawei%','%Lenovo%'])
+		group by
+			brands
+	)
+	
+select
+	brands,
+	transaction
+from 
+	"transaction per brand"
+order by
+	transaction desc
+;
+
+
+--Subquery
+select
+	brands,
+	transaction
+from
+	(select
+		case
+			when lower(sd.sku_name) like ('%samsung%') then 'Samsung'
+			when lower(sd.sku_name) like any (array['%apple%', '%iphone%']) then 'Apple'
+			when lower(sd.sku_name) like ('%sony%') then 'Sony'
+			when lower(sd.sku_name) like ('%huawei%') then 'Huawei'
+			when lower(sd.sku_name) like ('%lenovo%') then 'Lenovo'
+			else sd.sku_name
+		end as brands,
+			round(sum(od.after_discount)) as transaction
+		from
+			order_detail od
+		join
+			sku_detail sd 
+		on
+			od.sku_id = sd.id
+		where
+			od.is_valid = 1
+		and
+			sd.sku_name ilike any (array['%Samsung%','%Apple%','%Sony%','%Huawei%','%Lenovo%'])
+		group by
+			brands
+	) as "transaction per brand"
+order by
+	transaction desc
+;
