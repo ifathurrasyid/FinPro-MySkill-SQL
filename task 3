@@ -1,3 +1,4 @@
+-- CTE 
 with "transaction per year" as
 	(select
 		sd.category,
@@ -27,6 +28,39 @@ select
 end as sales
 from 
 	"transaction per year"
+group by
+	category
+order by
+	sales desc
+;
+
+-- Subquery
+select 
+	category,
+	max(case when year = 2021 then transaction end) as "total transaction in 2021",
+	max(case when year = 2022 then transaction end) as "total transaction in 2022",
+	case 
+		when max(case when year = 2021 then transaction end) > max(case when year = 2022 then transaction end) then 'decreasing sales'
+		when max(case when year = 2021 then transaction end) < max(case when year = 2022 then transaction end) then 'increasing sales'
+		else 'constant sales'
+end as sales
+from 
+	(select
+		sd.category,
+		extract (year from od.order_date) as year,
+		round(sum(od.after_discount)) as transaction
+	from
+		order_detail od 
+	join
+		sku_detail sd
+	on
+		od.sku_id = sd.id
+	where 
+		od.is_valid = 1 
+		and extract (year from od.order_date) in (2021, 2022)
+	group by
+		sd.category, extract (year from od.order_date)
+	)
 group by
 	category
 order by
