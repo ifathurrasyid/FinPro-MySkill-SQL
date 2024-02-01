@@ -1,0 +1,29 @@
+
+select * 
+from
+	order_detail od;
+
+select *
+from
+	payment_detail pd;
+
+select
+	payment_method as "payment method",
+	count(distinct od.id) as count
+from
+	order_detail od
+join
+	payment_detail pd
+on
+	od.payment_id = pd.id 
+where 
+	od.is_valid = 1
+and
+	extract (year from order_date) = 2022
+group by
+	"payment method"
+order by 
+	count desc
+limit
+	5
+;
