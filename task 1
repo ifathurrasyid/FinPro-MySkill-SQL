@@ -4,8 +4,9 @@ select *
 from 
 order_detail od;
 
+-- With normal query
 select 
-	extract (month from order_date) as month,
+	to_char(order_date, 'Month') as month,
 	sum(after_discount) as "transaction value"
 from
 	order_detail
@@ -19,4 +20,27 @@ order by
 	"transaction value" desc
 limit
 	1
-;	
+;
+
+-- With CTE
+with lookup as
+	(select
+		to_char(od.order_date, 'Month') as month,
+		round(sum(od.after_discount)) as total
+	from
+		order_detail od
+	where
+		od.is_valid = 1
+	and 
+		extract (year from order_date) = 2021
+	group by 
+		month
+	order by 
+		total desc
+	)
+select * 
+from 
+	lookup
+limit 
+	1
+;
