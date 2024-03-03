@@ -1,14 +1,6 @@
-
-select * 
-from
-	order_detail od;
-
-select *
-from
-	payment_detail pd;
-
 select
-	payment_method as "payment method",
+	rank () over(order by count(distinct od.id)desc) as rank,
+	pd.payment_method as "payment method",
 	count(distinct od.id) as count
 from
 	order_detail od
