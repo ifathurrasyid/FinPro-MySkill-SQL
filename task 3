@@ -1,3 +1,9 @@
+QUESTION:
+Compare the transaction values of each category in 2021 and 2022. Show which categories are increasing and decreasing in transaction value. Use is_valid = 1 to filter the transactions.
+
+
+
+
 with transaction as
 	(select
 		category,
