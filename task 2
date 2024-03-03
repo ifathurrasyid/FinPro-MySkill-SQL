@@ -1,3 +1,8 @@
+QUESTION:
+In 2022, which category produces the highest transaction value? Use is_valid = 1 to filter the transactions.
+
+
+
 -- With normal query
 
 select
