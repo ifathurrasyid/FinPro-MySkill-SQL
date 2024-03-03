@@ -1,13 +1,7 @@
--- show the month with the biggest transaction value in year 2021 --
-
-select *
-from 
-order_detail od;
-
 -- With normal query
 select 
 	to_char(order_date, 'Month') as month,
-	sum(after_discount) as "transaction value"
+	sum(after_discount) as total
 from
 	order_detail
 where  
@@ -17,7 +11,7 @@ and
 group by
 	month
 order by
-	"transaction value" desc
+	total desc
 limit
 	1
 ;
@@ -38,7 +32,8 @@ with lookup as
 	order by 
 		total desc
 	)
-select * 
+select 
+	* 
 from 
 	lookup
 limit 
