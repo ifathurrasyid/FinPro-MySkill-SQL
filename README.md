@@ -1,2 +1,2 @@
 # SQL projects
-List of SQL final projects tasked by MySkill. Feel free to use the codes.
+List of SQL final projects tasked by MySkill. Done with using PostgreSQL
