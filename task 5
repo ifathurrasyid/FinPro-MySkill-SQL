@@ -2,12 +2,12 @@
 with "transaction per brand" as
 	(select
 		case
-			when lower(sd.sku_name) like ('%samsung%') then 'Samsung'
-			when lower(sd.sku_name) like any (array['%apple%', '%iphone%']) then 'Apple'
-			when lower(sd.sku_name) like ('%sony%') then 'Sony'
-			when lower(sd.sku_name) like ('%huawei%') then 'Huawei'
-			when lower(sd.sku_name) like ('%lenovo%') then 'Lenovo'
-			else sd.sku_name
+			when lower(sd.sku_name) like '%samsung%' then 'Samsung'
+			when lower(sd.sku_name) like '%apple%' or lower(sd.sku_name) like '%iphone%' or   
+    		lower(sd.sku_name) like '%macbook%' or lower (sd.sku_name) like '%ipad%' then 'Apple'
+			when lower(sd.sku_name) like '%sony%' then 'Sony'
+			when lower(sd.sku_name) like '%huawei%' then 'Huawei'
+			when lower(sd.sku_name) like '%lenovo%' then 'Lenovo'
 		end as brands,
 			round(sum(od.after_discount)) as transaction
 		from
@@ -18,17 +18,16 @@ with "transaction per brand" as
 			od.sku_id = sd.id
 		where
 			od.is_valid = 1
-		and
-			sd.sku_name ilike any (array['%Samsung%','%Apple%','%Sony%','%Huawei%','%Lenovo%'])
 		group by
 			brands
 	)
-	
+
 select
-	brands,
-	transaction
+	*
 from 
 	"transaction per brand"
+where 
+	brands is not null
 order by
 	transaction desc
 ;
@@ -36,17 +35,20 @@ order by
 
 --Subquery
 select
+	rank,
 	brands,
 	transaction
 from
 	(select
+		rank () over(order by count(distinct od.id)desc) as rank,
 		case
-			when lower(sd.sku_name) like ('%samsung%') then 'Samsung'
-			when lower(sd.sku_name) like any (array['%apple%', '%iphone%']) then 'Apple'
-			when lower(sd.sku_name) like ('%sony%') then 'Sony'
-			when lower(sd.sku_name) like ('%huawei%') then 'Huawei'
-			when lower(sd.sku_name) like ('%lenovo%') then 'Lenovo'
-			else sd.sku_name
+			when lower(sd.sku_name) like '%samsung%' then 'Samsung'
+			when lower (sd.sku_name) like '%apple%' or lower (sd.sku_name) like '%iphone%' or   
+    lower (sd.sku_name) like '%macbook%' or lower (sd.sku_name) like '%ipad%'then 
+    'Apple'
+			when lower(sd.sku_name) like '%sony%' then 'Sony'
+			when lower(sd.sku_name) like '%huawei%' then 'Huawei'
+			when lower(sd.sku_name) like '%lenovo%' then 'Lenovo'
 		end as brands,
 			round(sum(od.after_discount)) as transaction
 		from
@@ -58,7 +60,7 @@ from
 		where
 			od.is_valid = 1
 		and
-			sd.sku_name ilike any (array['%Samsung%','%Apple%','%Sony%','%Huawei%','%Lenovo%'])
+			sd.sku_name ilike any (array['%Samsung%', '%Apple%', '%Sony%', '%Huawei%', '%Lenovo%'])
 		group by
 			brands
 	) as "transaction per brand"
