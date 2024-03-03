@@ -1,3 +1,15 @@
+QUESTION:
+Sort these 5 products based on their transaction values:
+1. Samsung,
+2. Apple,
+3. Sony,
+4. Huawei,
+5. Lenovo.
+Use is_valid = 1 to filter the transactions.
+
+
+
+
 -- CTE
 with "transaction per brand" as
 	(select
