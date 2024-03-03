@@ -1,3 +1,9 @@
+QUESTION:
+In 2021, which month has the highest total transaction value (after_discount)? Use is_valid = 1 to filter the transactions.
+
+
+
+
 -- With normal query
 select 
 	to_char(order_date, 'Month') as month,
