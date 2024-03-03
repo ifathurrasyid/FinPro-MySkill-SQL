@@ -1,68 +1,29 @@
--- CTE 
-with "transaction per year" as
+with transaction as
 	(select
-		sd.category,
-		extract (year from od.order_date) as year,
-		round(sum(od.after_discount)) as transaction
+		category,
+		round(sum(case when extract (year from order_date) = 2021 then after_discount end)) as "sales in 2021",
+		round(sum(case when extract (year from order_date) = 2022 then after_discount end)) as "sales in 2022"
 	from
 		order_detail od 
 	join
-		sku_detail sd
-	on
+		sku_detail sd 
+	on 
 		od.sku_id = sd.id
-	where 
-		od.is_valid = 1 
-		and extract (year from od.order_date) in (2021, 2022)
+	where
+		is_valid = 1
+	and
+		extract (year from order_date) in (2021,2022)
 	group by
-		sd.category, extract (year from od.order_date)
+		category
 	)
-	
 select 
-	category,
-	max(case when year = 2021 then transaction end) as "total transaction in 2021",
-	max(case when year = 2022 then transaction end) as "total transaction in 2022",
-	case 
-		when max(case when year = 2021 then transaction end) > max(case when year = 2022 then transaction end) then 'decreasing sales'
-		when max(case when year = 2021 then transaction end) < max(case when year = 2022 then transaction end) then 'increasing sales'
-		else 'constant sales'
-end as sales
-from 
-	"transaction per year"
-group by
-	category
+	*,
+	round("sales in 2022" - "sales in 2021") as difference,
+	case
+		when "sales in 2022" > "sales in 2021" then 'Increasing'
+		when "sales in 2022" < "sales in 2021" then 'Decreasing'
+	end as "sales growth"
+from
+	transaction
 order by
-	sales desc
-;
-
--- Subquery
-select 
-	category,
-	max(case when year = 2021 then transaction end) as "total transaction in 2021",
-	max(case when year = 2022 then transaction end) as "total transaction in 2022",
-	case 
-		when max(case when year = 2021 then transaction end) > max(case when year = 2022 then transaction end) then 'decreasing sales'
-		when max(case when year = 2021 then transaction end) < max(case when year = 2022 then transaction end) then 'increasing sales'
-		else 'constant sales'
-end as sales
-from 
-	(select
-		sd.category,
-		extract (year from od.order_date) as year,
-		round(sum(od.after_discount)) as transaction
-	from
-		order_detail od 
-	join
-		sku_detail sd
-	on
-		od.sku_id = sd.id
-	where 
-		od.is_valid = 1 
-		and extract (year from od.order_date) in (2021, 2022)
-	group by
-		sd.category, extract (year from od.order_date)
-	)
-group by
-	category
-order by
-	sales desc
-;
+	"sales growth" desc;
