@@ -1,3 +1,9 @@
+QUESTION:
+Show the top 5 most popular payment methods in 2022 (based on total unique order). Use is_valid = 1 to filter the transactions.
+
+
+
+
 select
 	rank () over(order by count(distinct od.id)desc) as rank,
 	pd.payment_method as "payment method",
